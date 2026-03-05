@@ -483,7 +483,7 @@ const RetraitEspece = () => {
                                                 }}
                                                 onChange={(e) =>
                                                     setMotifRetrait(
-                                                        e.target.value
+                                                        e.target.value,
                                                     )
                                                 }
                                                 value={motifRetrait}
@@ -589,7 +589,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setCommission(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={Commission}
@@ -687,7 +687,7 @@ const RetraitEspece = () => {
                                                         value={hundred}
                                                         onChange={(e) =>
                                                             sethundred(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                     />
@@ -709,7 +709,7 @@ const RetraitEspece = () => {
                                                         }}
                                                         onChange={(e) =>
                                                             setfitfty(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         value={fitfty}
@@ -732,7 +732,7 @@ const RetraitEspece = () => {
                                                         }}
                                                         onChange={(e) =>
                                                             settwenty(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         value={twenty}
@@ -755,7 +755,7 @@ const RetraitEspece = () => {
                                                         }}
                                                         onChange={(e) =>
                                                             setten(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         value={ten}
@@ -778,7 +778,7 @@ const RetraitEspece = () => {
                                                         }}
                                                         onChange={(e) =>
                                                             setfive(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         value={five}
@@ -801,7 +801,7 @@ const RetraitEspece = () => {
                                                         }}
                                                         onChange={(e) =>
                                                             setoneDollar(
-                                                                e.target.value
+                                                                e.target.value,
                                                             )
                                                         }
                                                         value={oneDollar}
@@ -825,7 +825,7 @@ const RetraitEspece = () => {
                                                         parseInt(ten) +
                                                         parseInt(five) +
                                                         parseInt(
-                                                            oneDollar
+                                                            oneDollar,
                                                         )}{" "}
                                                 </th>
                                                 <th
@@ -881,7 +881,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setvightMille(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={vightMille}
@@ -904,7 +904,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setdixMille(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={dixMille}
@@ -927,7 +927,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setcinqMille(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={cinqMille}
@@ -950,7 +950,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setmilleFranc(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={milleFranc}
@@ -973,7 +973,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setcinqCentFr(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={cinqCentFr}
@@ -996,7 +996,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setdeuxCentFranc(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={deuxCentFranc}
@@ -1019,7 +1019,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setcentFranc(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={centFranc}
@@ -1042,7 +1042,7 @@ const RetraitEspece = () => {
                                                     }}
                                                     onChange={(e) =>
                                                         setcinquanteFanc(
-                                                            e.target.value
+                                                            e.target.value,
                                                         )
                                                     }
                                                     value={cinquanteFanc}
@@ -1068,7 +1068,7 @@ const RetraitEspece = () => {
                                                     parseInt(deuxCentFranc) +
                                                     parseInt(centFranc) +
                                                     parseInt(
-                                                        cinquanteFanc
+                                                        cinquanteFanc,
                                                     )}{" "}
                                             </th>
                                             <th
@@ -1106,7 +1106,7 @@ const RetraitEspece = () => {
                                         five * 5 +
                                         oneDollar * 1 ===
                                         parseInt(
-                                            fetchData && fetchData.Montant
+                                            fetchData && fetchData.Montant,
                                         ) ||
                                     vightMille * 20000 +
                                         dixMille * 10000 +
@@ -1117,7 +1117,7 @@ const RetraitEspece = () => {
                                         centFranc * 100 +
                                         cinquanteFanc * 50 ===
                                         parseInt(
-                                            fetchData && fetchData.Montant
+                                            fetchData && fetchData.Montant,
                                         ) ? (
                                         <button
                                             className="btn btn-primary rounded-10"
@@ -1184,13 +1184,13 @@ const RetraitEspece = () => {
                                         return (
                                             <tr key={index}>
                                                 <td>{res.refOperation}</td>
-                                                <td>{res.montantEntre}</td>
+                                                <td>{res.montantSortie}</td>
                                                 <td>{res.Beneficiaire}</td>
                                                 <td>
                                                     <button
                                                         onClick={() =>
                                                             handlePrintClick(
-                                                                res
+                                                                res,
                                                             )
                                                         }
                                                         data-toggle="modal"
@@ -1232,13 +1232,13 @@ const RetraitEspece = () => {
                                         return (
                                             <tr key={index}>
                                                 <td>{res.refOperation}</td>
-                                                <td>{res.montantEntre}</td>
+                                                <td>{res.montantSortie}</td>
                                                 <td>{res.Beneficiaire}</td>
                                                 <td>
                                                     <button
                                                         onClick={() =>
                                                             handlePrintClick(
-                                                                res
+                                                                res,
                                                             )
                                                         }
                                                         data-toggle="modal"

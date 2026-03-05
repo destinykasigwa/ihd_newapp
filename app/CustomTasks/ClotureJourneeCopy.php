@@ -119,7 +119,7 @@ class ClotureJourneeCopy
                 $this->appliquerPaiementInteretPuisCapital($credit);
                 //SI LE SOLDE DU COMPTE EST INFERIEUR A L'INTERET QU'IL DOIT PAYER + CAPITAL
             } else {
-
+                $this->gererProvisions();
                 $this->constateRetard($credit->ReferenceEch);
                 // $this->traiterRemboursementsEnRetard();
             }
@@ -143,6 +143,7 @@ class ClotureJourneeCopy
      */
     protected function gererProvisions()
     {
+
         $creditsAvecProvisions = $this->recupererCreditsAvecProvisions();
 
         foreach ($creditsAvecProvisions as $credit) {
@@ -234,7 +235,7 @@ class ClotureJourneeCopy
             $libelle,
             $credit->Gestionnaire,
         );
-
+        $this->CheckTransactionStatus();
         //ENVOIE UN MESSAGE AU CLIENT INTERET COMPLET
         $this->sendNotification->sendNotificationRemboursementCredit($credit->numAdherant, $credit->CodeMonnaie, $credit->Interet, "Interet", "");
     }
@@ -287,6 +288,13 @@ class ClotureJourneeCopy
      */
     protected function recupererCreditsEnRetard()
     {
+
+        $creditsAvecProvisions = $this->recupererCreditsAvecProvisions();
+
+        foreach ($creditsAvecProvisions as $credit) {
+            $this->gererProvisionPourRetard($credit);
+        }
+
         // return Echeancier::join('portefeuilles', 'echeanciers.NumDossier', '=', 'portefeuilles.NumDossier')
         //     ->where('echeanciers.RetardPayement', 1)
         //     ->get(['echeanciers.*', 'portefeuilles.*']); // Sélectionnez les colonnes souhaitées
@@ -366,7 +374,7 @@ class ClotureJourneeCopy
                     if ($creditEnRetard->InteretPaye > 0) {
                         $interetRestant = $creditRet->Interet - $creditEnRetard->InteretPaye;
                         //VERIFIE LE SOLDE S'IL EST SUPERIEUR AU MONTANT D'INTERET RESTANT 
-                        if ($soldeMembre > $interetRestant) {
+                        if ($soldeMembre > $interetRestant and round($interetRestant, 2) > 0) {
                             info("interet restant " . $creditRet->Interet);
                             // PASSE ICI UNE ECRITURE POUR RECUPERER LE COMPLEMENT D'INTERET
                             $libelle = "Remboursement complement intérêt du crédit de "
@@ -374,6 +382,7 @@ class ClotureJourneeCopy
                                 . $creditRet->NbreJour . "e tranche tombée en date du "
                                 . $creditRet->DateTranch . " Numéro dossier "
                                 . $creditRet->NumDossier;
+
                             $this->insertInTransactionInteret(
                                 round($interetRestant, 2),
                                 $creditRet->CodeMonnaie,
@@ -386,6 +395,8 @@ class ClotureJourneeCopy
                                 $libelle,
                                 $creditRet->Gestionnaire,
                             );
+                            //PERMET DE METTRE A JOUR LE RESULTAT NET
+                            $this->CheckTransactionStatus();
 
 
                             // MET A JOUR LA TABLE REMBOURSEMENT
@@ -424,6 +435,8 @@ class ClotureJourneeCopy
                                 $libelle,
                                 $creditRet->Gestionnaire,
                             );
+                            //PERMET DE METTRE A JOUR LE RESULTAT NET
+                            $this->CheckTransactionStatus();
 
                             // MET A JOUR LA TABLE REMBOURSEMENT
                             $this->RenseignePayementPourPaiementQuiEtaitEnMoitieInteret(
@@ -458,6 +471,9 @@ class ClotureJourneeCopy
                                 $libelle,
                                 $creditRet->Gestionnaire,
                             );
+
+                            //PERMET DE METTRE A JOUR LE RESULTAT NET
+                            $this->CheckTransactionStatus();
 
                             // MET A JOUR LA TABLE REMBOURSEMENT
                             $this->RenseignePayementPourPaiementQuiEtaitEnMoitieInteret(
@@ -509,6 +525,8 @@ class ClotureJourneeCopy
                                 $libelle,
                                 $creditRet->Gestionnaire,
                             );
+                            //PERMET DE METTRE A JOUR LE RESULTAT NET
+                            $this->CheckTransactionStatus();
                             // MET A JOUR LA TABLE REMBOURSEMENT
                             $this->RenseignePayementPourPaiementQuiEtaitEnMoitieInteret(
                                 $creditRet->ReferenceEch,
@@ -545,6 +563,8 @@ class ClotureJourneeCopy
                                 $libelle,
                                 $creditRet->Gestionnaire,
                             );
+                            //PERMET DE METTRE A JOUR LE RESULTAT NET
+                            $this->CheckTransactionStatus();
 
                             // MET A JOUR LA TABLE REMBOURSEMENT
                             $this->RenseignePayementPourPaiementQuiEtaitEnMoitieInteret(
@@ -579,6 +599,8 @@ class ClotureJourneeCopy
                                 $libelle,
                                 $creditRet->Gestionnaire,
                             );
+                            //PERMET DE METTRE A JOUR LE RESULTAT NET
+                            $this->CheckTransactionStatus();
 
                             // MET A JOUR LA TABLE REMBOURSEMENT
                             $this->RenseignePayementPourPaiementQuiEtaitEnMoitieInteret(
@@ -720,8 +742,10 @@ class ClotureJourneeCopy
                             $this->gererProvisions();
 
                             //PASSE ECRITURE DE REPRISE
+
                             $this->insertInTransactionRepriseProvision(
-                                round($soldeMembre, 2),
+                                //round($soldeMembre, 2),
+                                round($CapitalRestant, 2),
                                 $creditRet->CodeMonnaie,
                                 $this->dateSystem,
                                 $creditRet->CodeAgence,
@@ -734,6 +758,7 @@ class ClotureJourneeCopy
                                 $creditRet->NumDossier,
                                 $creditRet->Gestionnaire,
                             );
+                            $this->CheckTransactionStatus();
 
                             //CLOTURE LA TRANCHE
                             $this->ClotureTranche($creditRet->ReferenceEch);
@@ -794,6 +819,7 @@ class ClotureJourneeCopy
                                 $creditRet->NumDossier,
                                 $creditRet->Gestionnaire,
                             );
+                            $this->CheckTransactionStatus();
                             //CLOTURE LA TRANCHE
                             $this->ClotureTranche($creditRet->ReferenceEch);
                             // $this->AnnuleMontantRetardEtJourRetard($creditRet->ReferenceEch, $creditRet->NumDossier);
@@ -862,6 +888,8 @@ class ClotureJourneeCopy
                                 $creditRet->Gestionnaire,
                             );
 
+                            $this->CheckTransactionStatus();
+
                             //ENVOIE UN MESSAGE AU CLIENT
                             $this->sendNotification->sendNotificationRemboursementCredit($creditRet->numAdherant, $creditRet->CodeMonnaie,   round($soldeMembre, 2), "Capital", "");
                         }
@@ -919,6 +947,7 @@ class ClotureJourneeCopy
                                 $creditRet->NumDossier,
                                 $creditRet->Gestionnaire,
                             );
+                            $this->CheckTransactionStatus();
                             //CLOTURE LA TRANCHE
                             $this->ClotureTranche($creditRet->ReferenceEch);
                             //ENVOIE UN MESSAGE AU CLIENT
@@ -972,6 +1001,7 @@ class ClotureJourneeCopy
                                 $creditRet->NumDossier,
                                 $creditRet->Gestionnaire,
                             );
+                            $this->CheckTransactionStatus();
                             //CLOTURE LA TRANCHE
                             $this->ClotureTranche($creditRet->ReferenceEch);
 
@@ -1036,6 +1066,7 @@ class ClotureJourneeCopy
                                 $creditRet->NumDossier,
                                 $creditRet->Gestionnaire,
                             );
+                            $this->CheckTransactionStatus();
                             //ENVOIE UN MESSAGE AU CLIENT
                             $this->sendNotification->sendNotificationRemboursementCredit($creditRet->numAdherant, $creditRet->CodeMonnaie,    round($soldeMembre, 2), "Capital", "");
                         }
@@ -1164,6 +1195,7 @@ class ClotureJourneeCopy
                 "1 à 30jrs",
                 $creditProv->Gestionnaire,
             );
+            $this->CheckTransactionStatus();
 
             JourRetard::where("NumDossier", $creditProv->NumDossier)->update([
                 "provision1" => 1,
@@ -1203,6 +1235,8 @@ class ClotureJourneeCopy
                 $creditProv->Gestionnaire,
             );
 
+            $this->CheckTransactionStatus();
+
             JourRetard::where("NumDossier", $creditProv->NumDossier)->update([
                 "provision2" => 1,
             ]);
@@ -1240,6 +1274,8 @@ class ClotureJourneeCopy
                 "61 à 90jrs",
                 $creditProv->Gestionnaire,
             );
+
+            $this->CheckTransactionStatus();
 
             JourRetard::where("NumDossier", $creditProv->NumDossier)->update([
                 "provision3" => 1,
@@ -1279,6 +1315,8 @@ class ClotureJourneeCopy
                 $creditProv->Gestionnaire,
             );
 
+            $this->CheckTransactionStatus();
+
             JourRetard::where("NumDossier", $creditProv->NumDossier)->update([
                 "provision4" => 1,
             ]);
@@ -1315,6 +1353,8 @@ class ClotureJourneeCopy
                 "plus de 180jrs",
                 $creditProv->Gestionnaire,
             );
+
+            $this->CheckTransactionStatus();
 
             JourRetard::where("NumDossier", $creditProv->NumDossier)->update([
                 "provision5" => 1,
@@ -1900,15 +1940,15 @@ class ClotureJourneeCopy
     ) {
 
         if ($provisionTranche == 1) {
-            $montantProvision = $montantRetard * 5 / 100;
+            $montantProvision = $SoldeCreditRestant * 5 / 100;
         } else if ($provisionTranche == 2) {
-            $montantProvision = $montantRetard * 10 / 100;
+            $montantProvision = $SoldeCreditRestant * 10 / 100;
         } else if ($provisionTranche == 3) {
-            $montantProvision = $montantRetard * 25 / 100;
+            $montantProvision = $SoldeCreditRestant * 25 / 100;
         } else if ($provisionTranche == 4) {
-            $montantProvision = $montantRetard * 75 / 100;
+            $montantProvision = $SoldeCreditRestant * 75 / 100;
         } else if ($provisionTranche == 5) {
-            $montantProvision = $montantRetard * 100 / 100;
+            $montantProvision = $SoldeCreditRestant * 100 / 100;
         }
 
         if ($codeMonnaie == "USD") {
@@ -2015,8 +2055,6 @@ class ClotureJourneeCopy
             "refCompteMembre" => $devise == 2 ? $this->compteDotationAuProvisionCDF : $this->compteRepriseDeProvisionUSD,
         ]);
     }
-
-
 
     //CETTE FONCTION PERMET DE FAIRE UNE INSERTION DANS LA TABLE TRANSACTION POUR LE PAIEMENT DU CAPITAL 
     protected function insertInTransactionRepriseProvision(
@@ -2255,6 +2293,7 @@ class ClotureJourneeCopy
                                 "Debit"  => 0,
                                 "Debit$"  => 0,
                                 "Debitfc" => 0,
+                                "is_system" => 1,
                             ]);
                         }
                         $soldeMembreProv = Transactions::select(
@@ -2410,6 +2449,7 @@ class ClotureJourneeCopy
                                     "Debit"  => 0,
                                     "Debit$"  => 0,
                                     "Debitfc" => 0,
+                                    "is_system" => 1,
                                 ]);
                             }
                         }
@@ -2914,7 +2954,6 @@ class ClotureJourneeCopy
 
 
     //CREATE ACCOUNT LOGIC
-
     public function createAccountLogic(
         $refCompteMembre,
         $codeMonnaie,
@@ -3083,6 +3122,69 @@ class ClotureJourneeCopy
                     'NumAdherant' => $refCompteMembre,
                 ]);
             }
+        }
+    }
+
+
+
+
+
+
+
+
+    //CETE FONCTION PERMET DE DIMPLIQUER UNE OPERATION POUR INCREMENTER OU DECREMENTER LE RESULTAT A CHAQUE FOIS QU'UN COMPTE DE RESULTAT EST TOUCHE
+    public function CheckTransactionStatus()
+    {
+        $numcompte = "";
+        // Récupérer la dernière ligne insérée dans la table transactions
+        $lastTransaction = Transactions::join('comptes', 'transactions.NumCompte', '=', 'comptes.NumCompte')
+            ->whereBetween('comptes.RefTypeCompte', [6, 7])
+            ->orderBy('transactions.RefTransaction', 'desc')
+            ->select('transactions.*') // Select only the columns from transactions
+            ->first();
+        if ($lastTransaction->CodeMonnaie == 2) {
+            $numcompte = "871";
+        } else {
+            $numcompte = "870";
+        }
+        // Vérifier si une transaction a été trouvée
+        if ($lastTransaction) {
+            // Récupérer le compte associé
+            $account = Comptes::where('NumCompte', $lastTransaction->NumCompte)->first();
+
+            // Log fetched account data
+            Log::info('Fetched account data', ['account' => $account]);
+
+            // Vérifier si le compte existe et que RefTypeCompte est 6 ou 7
+            if ($account && in_array($account->RefTypeCompte, [6, 7])) {
+                Log::info('Account exists and RefTypeCompte is in [6, 7]', ['RefTypeCompte' => $account->RefTypeCompte]);
+
+                // Répliquer la transaction sans l'ID pour le premier compte
+                $newTransaction = $lastTransaction->replicate(['RefTransaction']); // Ne pas répliquer l'ID
+                $newTransaction->NumCompte = $numcompte; // S'assurer que c'est le bon format pour NumCompte
+
+                // Appliquer la logique pour CodeMonnaie
+                if ($lastTransaction->CodeMonnaie == 1) {
+                    $newTransaction->Debitusd = $lastTransaction->Debitusd;
+                    $newTransaction->Creditusd = $lastTransaction->Creditusd;
+                } elseif ($lastTransaction->CodeMonnaie == 2) {
+                    $newTransaction->Debitfc = $lastTransaction->Debitfc;
+                    $newTransaction->Creditfc = $lastTransaction->Creditfc;
+                }
+
+                // Sauvegarder la nouvelle transaction
+                $newTransaction->save();
+
+                Log::info('Transaction duplicated successfully', ['transaction_id' => $newTransaction->id]);
+                // return 'Transaction duplicated successfully.';
+                //$this->CheckTransactionStatus(871, 851);
+            } else {
+                Log::error('Account not found or RefTypeCompte not in [6, 7]', ['transaction_id' => $lastTransaction->id, 'NumCompte' => $lastTransaction->NumCompte]);
+                return 'Account not found or RefTypeCompte not in [6, 7].';
+            }
+        } else {
+            Log::error('No transaction found');
+            return 'No transaction found.';
         }
     }
 }

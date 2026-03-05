@@ -57,6 +57,7 @@ class UtilisateurController extends Controller
             "password" => $defaultPassword,
             "start_date" => $todayDate,
             "expirate_date" => $todayDate,
+            "expirate_password" => 0,
             "locked_state" => 0,
             "attempt_times" => 6,
             "reseted_password" => 1,

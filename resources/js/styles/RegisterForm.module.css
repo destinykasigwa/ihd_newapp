@@ -68,6 +68,7 @@ div > .input_form {
     color: #666565;
     text-align: center;
     
+    
 }
 div > .input_form::placeholder {
     color: #b2b0b0;

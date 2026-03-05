@@ -31,16 +31,22 @@ export const EnteteBordereau = () => {
                     textAlign: "center",
                 }}
             >
-                {/* <h6>
+                <h6>
                     <b>{data && data.denomination}</b>
-                </h6> */}
+                </h6>
             </div>
             <table id="table" class="table entente-container" align="center">
                 <tr>
-                    {/* <td style={{ border: "0px" }}>
+                    <td style={{ border: "0px" }}>
                         {" "}
-                        
-                    </td> */}
+                        <img
+                            style={{
+                                width: "100%",
+                                height: "90px",
+                            }}
+                            src={`https://app.ihdemunis.org/uploads/images/logo/1696413083.jpg`}
+                        />
+                    </td>
                     <td
                         style={{
                             border: "0px",
@@ -53,18 +59,9 @@ export const EnteteBordereau = () => {
                         >
                             <h3>«{data && data.sigle}»</h3>
                             <p>
-                                <img
-                                    style={{
-                                        width: "100%",
-                                        height: "50px",
-                                    }}
-                                    src={`../uploads/images/logo/${
-                                        data ? data.company_logo : "default.jpg"
-                                    }`}
-                                />
-                                {/* {data && data.ville} {data && data.pays} <br /> */}
+                                {data && data.ville} {data && data.pays} <br />
                                 Téléphone: {data && data.tel} <br />
-                                {/* Courriel: {data && data.email} <br /> */}
+                                Courriel: {data && data.email} <br />
                             </p>
                         </div>
                     </td>
@@ -81,11 +78,7 @@ export const EnteteBordereau = () => {
                                             width: "100%",
                                             height: "90px",
                                         }}
-                                        src={`../uploads/images/logo/${
-                                            data
-                                                ? data.company_logo
-                                                : "default.jpg"
-                                        }`}
+                                        src={`https://app.ihdemunis.org/uploads/images/logo/1696413083.jpg`}
                                     />
                                 </b>
                             </h4>

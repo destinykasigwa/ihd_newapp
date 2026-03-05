@@ -86,7 +86,7 @@ const Releve = () => {
                 "/eco/page/depot-espece/get-account/specific",
                 {
                     NumCompte: event.target.innerHTML,
-                }
+                },
             );
             if (res.data.status == 1) {
                 setloadingData(false);
@@ -125,7 +125,7 @@ const Releve = () => {
             setGetSoldeReport(
                 res.data.dataSoldeReport.soldeReport == undefined
                     ? 0
-                    : res.data.dataSoldeReport.soldeReport
+                    : res.data.dataSoldeReport.soldeReport,
             );
             setGetDevise(res.data.devise);
             setGetSoldeInfo(res.data.soldeInfo);
@@ -207,9 +207,9 @@ const Releve = () => {
         // Optionally set column widths
         const ws = wb.Sheets[wb.SheetNames[0]];
         const cols = Array.from(
-            table.querySelectorAll("tr:first-child th")
+            table.querySelectorAll("tr:first-child th"),
         ).map(
-            () => ({ wpx: 100 }) // Set default width in pixels
+            () => ({ wpx: 100 }), // Set default width in pixels
         );
         ws["!cols"] = cols;
 
@@ -220,7 +220,7 @@ const Releve = () => {
         const fileName = `table_${tableId}.xlsx`;
         saveAs(
             new Blob([s2ab(wbout)], { type: "application/octet-stream" }),
-            fileName
+            fileName,
         );
     };
     const exportToPDFCDF = () => {
@@ -252,7 +252,7 @@ const Releve = () => {
                     pdfWidth,
                     imgHeight,
                     undefined,
-                    "FAST"
+                    "FAST",
                 ); // Use 'FAST' compression
                 heightLeft -= pdfHeight;
 
@@ -267,7 +267,7 @@ const Releve = () => {
                         pdfWidth,
                         imgHeight,
                         undefined,
-                        "FAST"
+                        "FAST",
                     ); // Use 'FAST' compression
                     heightLeft -= pdfHeight;
                 }
@@ -376,7 +376,7 @@ const Releve = () => {
                                                     }}
                                                     onChange={(e) => {
                                                         setsearched_account(
-                                                            e.target.value
+                                                            e.target.value,
                                                         );
                                                     }}
                                                 />
@@ -405,7 +405,7 @@ const Releve = () => {
                                                     }}
                                                     onChange={(e) => {
                                                         setsearched_account_by_name(
-                                                            e.target.value
+                                                            e.target.value,
                                                         );
                                                     }}
                                                 />
@@ -556,7 +556,7 @@ const Releve = () => {
                                                             }}
                                                             onClick={(event) =>
                                                                 getAccountInfo(
-                                                                    event
+                                                                    event,
                                                                 )
                                                             }
                                                         >
@@ -603,10 +603,10 @@ const Releve = () => {
                                                                     cursor: "pointer",
                                                                 }}
                                                                 onClick={(
-                                                                    event
+                                                                    event,
                                                                 ) =>
                                                                     getAccountInfo(
-                                                                        event
+                                                                        event,
                                                                     )
                                                                 }
                                                             >
@@ -631,7 +631,7 @@ const Releve = () => {
                                                             </td>
                                                         </tr>
                                                     );
-                                                }
+                                                },
                                             )}
                                         <tr>
                                             {/* <td>
@@ -677,7 +677,7 @@ const Releve = () => {
                                                     type="date"
                                                     onChange={(e) => {
                                                         setDateDebut(
-                                                            e.target.value
+                                                            e.target.value,
                                                         );
                                                     }}
                                                     value={
@@ -710,7 +710,7 @@ const Releve = () => {
                                                     type="date"
                                                     onChange={(e) => {
                                                         setDateFin(
-                                                            e.target.value
+                                                            e.target.value,
                                                         );
                                                     }}
                                                     value={
@@ -903,8 +903,8 @@ const Releve = () => {
                                                                     undefined &&
                                                                     numberWithSpaces(
                                                                         getSoldeInfo.soldeDispo.toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     )}
                                                             </strong>
                                                         </td>
@@ -923,7 +923,7 @@ const Releve = () => {
                                                                 {dateParser(
                                                                     dateDebut
                                                                         ? dateDebut
-                                                                        : getdefaultDateDebut
+                                                                        : getdefaultDateDebut,
                                                                 )}
                                                             </strong>
                                                         </td>
@@ -941,7 +941,9 @@ const Releve = () => {
                                                                 }}
                                                             >
                                                                 {numberWithSpaces(
-                                                                    getSoldeReport
+                                                                    getSoldeReport.toFixed(
+                                                                        2,
+                                                                    ),
                                                                 )}
                                                             </strong>
                                                         </td>
@@ -972,8 +974,8 @@ const Releve = () => {
                                                                     undefined &&
                                                                     numberWithSpaces(
                                                                         getSoldeInfo.TotalDebit.toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     )}
                                                             </strong>
                                                         </td>
@@ -1003,8 +1005,8 @@ const Releve = () => {
                                                                     undefined &&
                                                                     numberWithSpaces(
                                                                         getSoldeInfo.TotalCredit.toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     )}
                                                             </strong>
                                                         </td>
@@ -1035,7 +1037,7 @@ const Releve = () => {
                                                                     {dateParser(
                                                                         dateDebut
                                                                             ? dateDebut
-                                                                            : getdefaultDateDebut
+                                                                            : getdefaultDateDebut,
                                                                     )}
                                                                 </strong>
                                                             </strong>
@@ -1067,7 +1069,7 @@ const Releve = () => {
                                                                     {dateParser(
                                                                         dateFin
                                                                             ? dateFin
-                                                                            : getdefaultDateFin
+                                                                            : getdefaultDateFin,
                                                                     )}
                                                                 </strong>
                                                             </strong>
@@ -1113,7 +1115,7 @@ const Releve = () => {
                                                                         }}
                                                                     >
                                                                         {dateParser(
-                                                                            res.DateTransaction
+                                                                            res.DateTransaction,
                                                                         )}
                                                                     </td>
                                                                     <td
@@ -1175,39 +1177,39 @@ const Releve = () => {
                                                                             ? "(" +
                                                                               parseFloat(
                                                                                   res.solde +
-                                                                                      getSoldeReport
+                                                                                      getSoldeReport,
                                                                               )
                                                                                   .toFixed(
-                                                                                      2
+                                                                                      2,
                                                                                   )
                                                                                   .replace(
                                                                                       /\B(?=(\d{3})+(?!\d))/g,
-                                                                                      " "
+                                                                                      " ",
                                                                                   )
                                                                                   .replace(
                                                                                       ".",
-                                                                                      ","
+                                                                                      ",",
                                                                                   ) +
                                                                               ")"
                                                                             : parseFloat(
                                                                                   res.solde +
-                                                                                      getSoldeReport
+                                                                                      getSoldeReport,
                                                                               )
                                                                                   .toFixed(
-                                                                                      2
+                                                                                      2,
                                                                                   )
                                                                                   .replace(
                                                                                       /\B(?=(\d{3})+(?!\d))/g,
-                                                                                      " "
+                                                                                      " ",
                                                                                   )
                                                                                   .replace(
                                                                                       ".",
-                                                                                      ","
+                                                                                      ",",
                                                                                   )}
                                                                     </td>
                                                                 </tr>
                                                             );
-                                                        }
+                                                        },
                                                     )}
                                                 </tbody>
                                             </table>
@@ -1218,7 +1220,7 @@ const Releve = () => {
                                         <button
                                             onClick={() =>
                                                 exportTableData(
-                                                    "main-table-releve-CDF"
+                                                    "main-table-releve-CDF",
                                                 )
                                             }
                                             className="btn btn-success"
@@ -1391,8 +1393,8 @@ const Releve = () => {
                                                                     undefined &&
                                                                     numberWithSpaces(
                                                                         getSoldeInfo.soldeDispo.toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     )}
                                                             </strong>
                                                         </td>
@@ -1411,7 +1413,7 @@ const Releve = () => {
                                                                 {dateParser(
                                                                     dateDebut
                                                                         ? dateDebut
-                                                                        : getdefaultDateDebut
+                                                                        : getdefaultDateDebut,
                                                                 )}
                                                             </strong>
                                                         </td>
@@ -1430,8 +1432,8 @@ const Releve = () => {
                                                             >
                                                                 {numberWithSpaces(
                                                                     getSoldeReport.toFixed(
-                                                                        2
-                                                                    )
+                                                                        2,
+                                                                    ),
                                                                 )}
                                                             </strong>
                                                         </td>
@@ -1462,8 +1464,8 @@ const Releve = () => {
                                                                     undefined &&
                                                                     numberWithSpaces(
                                                                         getSoldeInfo.TotalDebit.toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     )}
                                                             </strong>
                                                         </td>
@@ -1493,8 +1495,8 @@ const Releve = () => {
                                                                     undefined &&
                                                                     numberWithSpaces(
                                                                         getSoldeInfo.TotalCredit.toFixed(
-                                                                            2
-                                                                        )
+                                                                            2,
+                                                                        ),
                                                                     )}
                                                             </strong>
                                                         </td>
@@ -1523,7 +1525,7 @@ const Releve = () => {
                                                                 {dateParser(
                                                                     dateDebut
                                                                         ? dateDebut
-                                                                        : getdefaultDateDebut
+                                                                        : getdefaultDateDebut,
                                                                 )}
                                                             </strong>
                                                         </td>
@@ -1552,7 +1554,7 @@ const Releve = () => {
                                                                 {dateParser(
                                                                     dateFin
                                                                         ? dateFin
-                                                                        : getdefaultDateFin
+                                                                        : getdefaultDateFin,
                                                                 )}
                                                             </strong>
                                                         </td>
@@ -1598,7 +1600,7 @@ const Releve = () => {
                                                                         }}
                                                                     >
                                                                         {dateParser(
-                                                                            res.DateTransaction
+                                                                            res.DateTransaction,
                                                                         )}
                                                                     </td>
                                                                     <td
@@ -1660,39 +1662,39 @@ const Releve = () => {
                                                                             ? "(" +
                                                                               parseFloat(
                                                                                   res.solde +
-                                                                                      getSoldeReport
+                                                                                      getSoldeReport,
                                                                               )
                                                                                   .toFixed(
-                                                                                      2
+                                                                                      2,
                                                                                   )
                                                                                   .replace(
                                                                                       /\B(?=(\d{3})+(?!\d))/g,
-                                                                                      " "
+                                                                                      " ",
                                                                                   )
                                                                                   .replace(
                                                                                       ".",
-                                                                                      ","
+                                                                                      ",",
                                                                                   ) +
                                                                               ")"
                                                                             : parseFloat(
                                                                                   res.solde +
-                                                                                      getSoldeReport
+                                                                                      getSoldeReport,
                                                                               )
                                                                                   .toFixed(
-                                                                                      2
+                                                                                      2,
                                                                                   )
                                                                                   .replace(
                                                                                       /\B(?=(\d{3})+(?!\d))/g,
-                                                                                      " "
+                                                                                      " ",
                                                                                   )
                                                                                   .replace(
                                                                                       ".",
-                                                                                      ","
+                                                                                      ",",
                                                                                   )}
                                                                     </td>
                                                                 </tr>
                                                             );
-                                                        }
+                                                        },
                                                     )}
                                                 </tbody>
                                             </table>
@@ -1702,7 +1704,7 @@ const Releve = () => {
                                         <button
                                             onClick={() =>
                                                 exportTableData(
-                                                    "main-table-releve-USD"
+                                                    "main-table-releve-USD",
                                                 )
                                             }
                                             className="btn btn-success"

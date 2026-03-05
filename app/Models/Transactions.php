@@ -92,5 +92,6 @@ class Transactions extends Model
         "isSuspens",
         "extourner",
         "isVirement",
+        "is_system",
     ];
 }

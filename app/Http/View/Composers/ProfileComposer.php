@@ -25,6 +25,7 @@ class ProfileComposer
         $isAgentCredit = $this->accessConfigController->AgentCreditProfile($idUser);
         $isChefCaisse = $this->accessConfigController->ChefCaisseProfile($idUser);
         $isAgentClientele = $this->accessConfigController->IsAgentClientele($idUser);
+        $isAgentTerrain = $this->accessConfigController->isAgentTerrain($idUser);
         $view->with([
             'isCaissier' => $isCaissier,
             'isIT' => $isIT,
@@ -32,6 +33,7 @@ class ProfileComposer
             'isAgentCredit' => $isAgentCredit,
             'isChefCaisse' => $isChefCaisse,
             'isAgentClientele' => $isAgentClientele,
+            'isAgentTerrain' => $isAgentTerrain,
         ]);
     }
 }

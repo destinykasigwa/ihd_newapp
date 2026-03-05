@@ -240,7 +240,7 @@ class TransactionsController extends Controller
                         ]);
                         // Transactions::recalculateBalances($dataCompte->NumCompte, $dataSystem->DateSystem);
                         //PERMET DE DIPLIQUE LA LIGNE POUR METTRE A JOUR Résultat Net de l'exercice
-                        $this->CheckTransactionStatus(871);
+                        // $this->CheckTransactionStatus(871);
                         if ($request->Montant == 0) {
                             return response()->json(["status" => 1, "msg" => "Opération bien enregistrée"]);
                         }
@@ -703,6 +703,7 @@ class TransactionsController extends Controller
     {
 
         if (isset($request->NumAbrege)) {
+
             //VERTIFIE SI LE BILLETATGE ENTREE PAR LE CAISSIER CORRESPOND AU BILLETAGE QU'IL POSSEDE DANS SA CAISSE
             if ($request->devise == "CDF") {
 
@@ -720,7 +721,13 @@ class TransactionsController extends Controller
                 )->where("NomUtilisateur", "=", Auth::user()->name)->where("DateTransaction", "=", $date)
                     ->groupBy("NomUtilisateur")
                     ->get();
-                if (isset($billetageCDF[0])) {
+
+
+
+                if ($billetageCDF->isEmpty()) {
+
+                    return response()->json(['status' => 0, "msg" => "Vous devez d'abord effectuer un appro votre caisse en CDF semble n'est pas contenir de fonds !"]);
+                } else {
 
                     if ($request->vightMille > $billetageCDF[0]->vightMilleFran) {
                         return response()->json(['status' => 0, 'msg' => "Oooops! Nombre de billet pour 20.000f non disponible vous avez " . $billetageCDF[0]->vightMilleFran . " billets dans votre caisse"]);
@@ -748,8 +755,15 @@ class TransactionsController extends Controller
                     $numOperation = CompteurTransaction::latest()->first();
                     $NumTransaction = Auth::user()->name[0] . Auth::user()->name[1] . "00" . $numOperation->id;
                     //RECUPERE LE COMPTE DU CAISSIER CONCERNE CDF
-                    $dataCompte = Comptes::where("NumAdherant", $request->NumAbrege)
-                        ->where("CodeMonnaie", 2)->first();
+                    //$dataCompte = Comptes::where("NumAdherant", $request//->NumAbrege)
+                    // ->where("CodeMonnaie", 2)->first();
+                    $dataCompte = Comptes::where(function ($query) use ($request) {
+                        $query->where('NumAdherant', $request->NumAbrege)
+                            ->orWhere('NumCompte', $request->NumAbrege);
+                    })
+                        ->where('CodeMonnaie', 2)
+                        ->first();
+
                     if ($dataCompte) {
                         $numCompteCaissierCDF = Comptes::where("caissierId", "=", Auth::user()->id)->where("CodeMonnaie", "=", "2")->first();
                         $CompteCaissierCDF = $numCompteCaissierCDF->NumCompte;
@@ -913,10 +927,12 @@ class TransactionsController extends Controller
                     }
                 }
             }
+
             if ($request->devise == "USD") {
                 CompteurTransaction::create([
                     'fakevalue' => "0000",
                 ]);
+
                 //RECUPERE LA SOMME DE BILLETAGE USD
                 $date = TauxEtDateSystem::orderBy('id', 'desc')->first()->DateSystem;
                 $billetageUSD = BilletageUSD::select(
@@ -949,8 +965,12 @@ class TransactionsController extends Controller
                     $numOperation = CompteurTransaction::latest()->first();
                     $NumTransaction = Auth::user()->name[0] . Auth::user()->name[1] . "00" . $numOperation->id;
                     //RECUPERE LE COMPTE DU CAISSIER CONCERNE CDF
-                    $dataCompte = Comptes::where("NumAdherant", $request->NumAbrege)
-                        ->where("CodeMonnaie", 1)->first();
+                    $dataCompte = Comptes::where(function ($query) use ($request) {
+                        $query->where('NumAdherant', $request->NumAbrege)
+                            ->orWhere('NumCompte', $request->NumAbrege);
+                    })
+                        ->where('CodeMonnaie', 1)
+                        ->first();
                     if ($dataCompte) {
                         $numCompteCaissierUSD = Comptes::where("caissierId", "=", Auth::user()->id)->where("CodeMonnaie", "=", "1")->first();
                         $CompteCaissierUSD = $numCompteCaissierUSD->NumCompte;
@@ -1335,7 +1355,10 @@ class TransactionsController extends Controller
                 )->where("NumCompte", '=', $numCompteCaissePrCDF)
                     ->groupBy("NumCompte")
                     ->first();
-                if ($soldeComptePrincip->soldeCompte >= $request->Montant) {
+
+                $montant = (int) $request->Montant;
+                $solde = abs($soldeComptePrincip->soldeCompte);
+                if ($solde >= $montant) {
                     $caissierEccount = Comptes::where("caissierId", $request->CaissierId)->where("CodeMonnaie", 2)->first();
                     //RECUPERE SUR LA TABLE USERS LE NOM QUI CORRESPOND A CE ID CDF
                     $dateSystem = TauxEtDateSystem::latest()->first()->DateSystem;
@@ -1368,13 +1391,16 @@ class TransactionsController extends Controller
                     return response()->json(["status" => 0, "msg" => "Le montant saisi est superieur au solde de la caisse principale son solde est: " . $soldeComptePrincip->soldeCompte]);
                 }
             } else if ($request->devise == "USD") {
+
                 $numCompteCaissePrUSD = $this->numCompteCaissePrUSD;
                 $soldeComptePrincip = Transactions::select(
                     DB::raw("SUM(Debitusd)-SUM(Creditusd) as soldeCompte"),
                 )->where("NumCompte", '=', $numCompteCaissePrUSD)
                     ->groupBy("NumCompte")
                     ->first();
-                if ($soldeComptePrincip->soldeCompte >= $request->Montant) {
+                $montant = (int) $request->Montant;
+                $solde = abs($soldeComptePrincip->soldeCompte);
+                if ($solde >= $montant) {
                     $caissierEccount = Comptes::where("caissierId", $request->CaissierId)->where("CodeMonnaie", 1)->first();
                     $numOperation = [];
                     $numOperation = CompteurTransaction::latest()->first();
@@ -1778,7 +1804,7 @@ class TransactionsController extends Controller
                 "Debitusd" => $data->montantUSD,
                 "Debitfc" => $data->montantUSD * $tauxDuJour,
                 "NomUtilisateur" => Auth::user()->name,
-                "Libelle" => "Delestage caisse secondaire de " . $data->NomDemandeur,
+                "Libelle" => "Entrée Tresor par " . $data->NomDemandeur,
             ]);
 
             //ON CREDITE LE COMPTE DU CAISSIER CONCERNE 
@@ -1893,7 +1919,7 @@ class TransactionsController extends Controller
                 "Debitusd" => $data->montantCDF / $tauxDuJour,
                 "Debitfc" => $data->montantCDF,
                 "NomUtilisateur" => Auth::user()->name,
-                "Libelle" => "Delestage caisse secondaire de " . $data->NomDemandeur,
+                "Libelle" => "Entrée Tresor par " . $data->NomDemandeur,
             ]);
 
             //ON CREDITE LE COMPTE DU CAISSIER CONCERNE 
@@ -2600,7 +2626,7 @@ class TransactionsController extends Controller
                         "Libelle" => $request->Libelle,
                         "isVirement" => $request->isVirement ? 1 : 0
                     ]);
-                    $this->CheckTransactionStatus(871);
+                    // $this->CheckTransactionStatus(871);
                     // $this->CheckTransactionStatus2(851);
 
                     //CETTE LOGIQUE PERMET D'ENVOYER UN MESSAGE AU CLIENT LORSQUE LE COMPTE MOUVEMENTER SONT DES COMPTES EPARGNE
@@ -2749,7 +2775,7 @@ class TransactionsController extends Controller
                         "isVirement" => $request->isVirement ? 1 : 0
                     ]);
 
-                    $this->CheckTransactionStatus(870);
+                    // $this->CheckTransactionStatus(870);
                     // $this->CheckTransactionStatus2(851);
 
                     return response()->json([
@@ -2777,55 +2803,55 @@ class TransactionsController extends Controller
         }
     }
     //CETE FONCTION PERMET DE DIMPLUQUER UNE OPERATION POUR INCREMENTE OU DECREMENTE LE RESULTAT A CHAQUE FOIS QU'UN COMPTE DE CHARGE EST TOUCHE
-    public function CheckTransactionStatus($numcompte)
-    {
-        // Récupérer la dernière ligne insérée dans la table transactions
-        $lastTransaction = Transactions::join('comptes', 'transactions.NumCompte', '=', 'comptes.NumCompte')
-            ->whereBetween('comptes.RefTypeCompte', [6, 7])
-            ->orderBy('transactions.RefTransaction', 'desc')
-            ->select('transactions.*') // Select only the columns from transactions
-            ->first();
+    // public function CheckTransactionStatus($numcompte)
+    // {
+    //     // Récupérer la dernière ligne insérée dans la table transactions
+    //     $lastTransaction = Transactions::join('comptes', 'transactions.NumCompte', '=', 'comptes.NumCompte')
+    //         ->whereBetween('comptes.RefTypeCompte', [6, 7])
+    //         ->orderBy('transactions.RefTransaction', 'desc')
+    //         ->select('transactions.*') // Select only the columns from transactions
+    //         ->first();
 
-        // Vérifier si une transaction a été trouvée
-        if ($lastTransaction) {
-            // Récupérer le compte associé
-            $account = Comptes::where('NumCompte', $lastTransaction->NumCompte)->first();
+    //     // Vérifier si une transaction a été trouvée
+    //     if ($lastTransaction) {
+    //         // Récupérer le compte associé
+    //         $account = Comptes::where('NumCompte', $lastTransaction->NumCompte)->first();
 
-            // Log fetched account data
-            Log::info('Fetched account data', ['account' => $account]);
+    //         // Log fetched account data
+    //         Log::info('Fetched account data', ['account' => $account]);
 
-            // Vérifier si le compte existe et que RefTypeCompte est 6 ou 7
-            if ($account && in_array($account->RefTypeCompte, [6, 7])) {
-                Log::info('Account exists and RefTypeCompte is in [6, 7]', ['RefTypeCompte' => $account->RefTypeCompte]);
+    //         // Vérifier si le compte existe et que RefTypeCompte est 6 ou 7
+    //         if ($account && in_array($account->RefTypeCompte, [6, 7])) {
+    //             Log::info('Account exists and RefTypeCompte is in [6, 7]', ['RefTypeCompte' => $account->RefTypeCompte]);
 
-                // Répliquer la transaction sans l'ID pour le premier compte
-                $newTransaction = $lastTransaction->replicate(['RefTransaction']); // Ne pas répliquer l'ID
-                $newTransaction->NumCompte = $numcompte; // S'assurer que c'est le bon format pour NumCompte
+    //             // Répliquer la transaction sans l'ID pour le premier compte
+    //             $newTransaction = $lastTransaction->replicate(['RefTransaction']); // Ne pas répliquer l'ID
+    //             $newTransaction->NumCompte = $numcompte; // S'assurer que c'est le bon format pour NumCompte
 
-                // Appliquer la logique pour CodeMonnaie
-                if ($lastTransaction->CodeMonnaie == 1) {
-                    $newTransaction->Debitusd = $lastTransaction->Debitusd;
-                    $newTransaction->Creditusd = $lastTransaction->Creditusd;
-                } elseif ($lastTransaction->CodeMonnaie == 2) {
-                    $newTransaction->Debitfc = $lastTransaction->Debitfc;
-                    $newTransaction->Creditfc = $lastTransaction->Creditfc;
-                }
+    //             // Appliquer la logique pour CodeMonnaie
+    //             if ($lastTransaction->CodeMonnaie == 1) {
+    //                 $newTransaction->Debitusd = $lastTransaction->Debitusd;
+    //                 $newTransaction->Creditusd = $lastTransaction->Creditusd;
+    //             } elseif ($lastTransaction->CodeMonnaie == 2) {
+    //                 $newTransaction->Debitfc = $lastTransaction->Debitfc;
+    //                 $newTransaction->Creditfc = $lastTransaction->Creditfc;
+    //             }
 
-                // Sauvegarder la nouvelle transaction
-                $newTransaction->save();
+    //             // Sauvegarder la nouvelle transaction
+    //             $newTransaction->save();
 
-                Log::info('Transaction duplicated successfully', ['transaction_id' => $newTransaction->id]);
-                // return 'Transaction duplicated successfully.';
-                //$this->CheckTransactionStatus(871, 851);
-            } else {
-                Log::error('Account not found or RefTypeCompte not in [6, 7]', ['transaction_id' => $lastTransaction->id, 'NumCompte' => $lastTransaction->NumCompte]);
-                return 'Account not found or RefTypeCompte not in [6, 7].';
-            }
-        } else {
-            Log::error('No transaction found');
-            return 'No transaction found.';
-        }
-    }
+    //             Log::info('Transaction duplicated successfully', ['transaction_id' => $newTransaction->id]);
+    //             // return 'Transaction duplicated successfully.';
+    //             //$this->CheckTransactionStatus(871, 851);
+    //         } else {
+    //             Log::error('Account not found or RefTypeCompte not in [6, 7]', ['transaction_id' => $lastTransaction->id, 'NumCompte' => $lastTransaction->NumCompte]);
+    //             return 'Account not found or RefTypeCompte not in [6, 7].';
+    //         }
+    //     } else {
+    //         Log::error('No transaction found');
+    //         return 'No transaction found.';
+    //     }
+    // }
 
     //CETE FONCTION PERMET DE DIMPLUQUER UNE OPERATION POUR INCREMENTE OU DECREMENTE LE RESULTAT A CHAQUE FOIS QU'UN COMPTE DE CHARGE EST TOUCHE
     // public function CheckTransactionStatus2($numcompte)
@@ -2948,7 +2974,7 @@ class TransactionsController extends Controller
                         "NomUtilisateur" => Auth::user()->name,
                         "Libelle" => $request->Libelle,
                     ]);
-                    $this->CheckTransactionStatus(871);
+                    // $this->CheckTransactionStatus(871);
                     return response()->json([
                         "status" => 1,
                         "msg" => "Opération bien enregistrée."
@@ -3025,7 +3051,7 @@ class TransactionsController extends Controller
                         "NomUtilisateur" => Auth::user()->name,
                         "Libelle" => $request->Libelle,
                     ]);
-                    $this->CheckTransactionStatus(870);
+                    // $this->CheckTransactionStatus(870);
                     return response()->json([
                         "status" => 1,
                         "msg" => "Opération bien enregistrée."
@@ -3137,13 +3163,15 @@ class TransactionsController extends Controller
                     }
                 }
                 //SEND NOTIFICATION
-
-                if ($dataRefCompteClient->CodeMonnaie == 1) {
-                    $devise = "USD"; //USD
-                } else if ($dataRefCompteClient->CodeMonnaie == 2) {
-                    $devise = "CDF"; //CDF
+                if ($dataRefCompteClient) {
+                    if ($dataRefCompteClient->CodeMonnaie == 1) {
+                        $devise = "USD"; //USD
+                    } else if ($dataRefCompteClient->CodeMonnaie == 2) {
+                        $devise = "CDF"; //CDF
+                    }
+                    $this->sendNotification->sendNotificationExtourneOp($dataRefCompteClient->refCompteMembre, $devise, ($dataRefCompteClient->TypeTransaction == "D" ? $dataRefCompteClient->Debit : $dataRefCompteClient->Credit), $dataRefCompteClient->TypeTransaction);
                 }
-                $this->sendNotification->sendNotificationExtourneOp($dataRefCompteClient->refCompteMembre, $devise, ($dataRefCompteClient->TypeTransaction == "D" ? $dataRefCompteClient->Debit : $dataRefCompteClient->Credit), $dataRefCompteClient->TypeTransaction);
+
                 // END SEND NOTIFICATION
                 return response()->json(["status" => 1, "msg" => "Extourne bien effectuée"]);
                 // return response()->json(["status" => 1, "data" => $data]);

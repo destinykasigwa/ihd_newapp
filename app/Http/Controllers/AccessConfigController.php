@@ -45,4 +45,10 @@ class AccessConfigController extends Controller
         $getUserRole = DB::select('SELECT * FROM profiles JOIN profils_users ON profils_users.profil_id = profiles.id WHERE profils_users.user_id = ? AND profiles.nom_profile = ?', [$idUser, 'Agent clientèle']);
         return !empty($getUserRole);
     }
+
+    public function isAgentTerrain($idUser)
+    {
+        $getUserRole = DB::select('SELECT * FROM profiles JOIN profils_users ON profils_users.profil_id = profiles.id WHERE profils_users.user_id = ? AND profiles.nom_profile = ?', [$idUser, 'Agent Terrain']);
+        return !empty($getUserRole);
+    }
 }

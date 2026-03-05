@@ -69,7 +69,7 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
-            <li class="nav-item d-none d-sm-inline-block">
+            <li class="nav-item">
                 <a href="eco/home" class="nav-link">Home</a>
             </li>
 
@@ -140,128 +140,133 @@
             </li> --}}
         </ul>
     </nav>
-
-    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
-        <div class="container">
-            {{-- <a class="navbar-brand" href="home">ECONOMISONS</a> --}}
-            {{-- <form action="#" class="searchform order-sm-start order-lg-last">
+    @if (!$isAgentTerrain or $isIT)
+        <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+            <div class="container">
+                {{-- <a class="navbar-brand" href="home">ECONOMISONS</a> --}}
+                {{-- <form action="#" class="searchform order-sm-start order-lg-last">
                 <div class="form-group d-flex">
                     <input type="text" class="form-control pl-3" placeholder="Search">
                     <button type="submit" placeholder="" class="form-control search"><span
                             class="fa fa-search"></span></button>
                 </div>
             </form> --}}
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
-                aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="fa fa-bars"></span> Menu
-            </button>
-            <div class="collapse navbar-collapse text-center" id="ftco-nav">
-                <ul class="navbar-nav m-auto">
-                    <li class="nav-item active"><a href="eco/home" class="nav-link">Home</a></li>
-                    @if ($isCaissier)
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">Caisse</a>
-                            <div class="dropdown-menu" aria-labelledby="dropdown04">
-                                <a class="dropdown-item" href="{{ route('eco.pages.depot-espece') }}">Dépot</a>
-                                <a class="dropdown-item" href="{{ route('eco.pages.retrait-espece') }}">Rétrait</a>
-                                <a class="dropdown-item" href="{{ route('eco.pages.visa') }}">Positionnement</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav"
+                    aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="fa fa-bars"></span> Menu
+                </button>
+                <div class="collapse navbar-collapse text-center" id="ftco-nav">
+                    <ul class="navbar-nav m-auto">
+                        <li class="nav-item active"><a href="eco/home" class="nav-link">Home</a></li>
+                        @if ($isCaissier)
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdown04"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Caisse</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdown04">
+                                    <a class="dropdown-item" href="{{ route('eco.pages.depot-espece') }}">Dépot</a>
+                                    <a class="dropdown-item"
+                                        href="{{ route('eco.pages.retrait-espece') }}">Rétrait</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.visa') }}">Positionnement</a>
 
-                                <a class="dropdown-item" href="{{ route('eco.pages.appro') }}">Appro</a>
-                                <a class="dropdown-item" href="{{ route('eco.pages.delestage') }}">Délestage</a>
-                                <a class="dropdown-item" href="{{ route('eco.pages.entreeT') }}">Entrée T</a>
-                            </div>
-                        </li>
-                    @endif
-                    @if ($isAgentCredit)
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="dropdown04"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Crédit</a>
-                            <div class="dropdown-menu" aria-labelledby="dropdown04">
-                                <a class="dropdown-item" href="{{ route('eco.pages.montage-credit') }}">Montage
-                                    crédit</a>
-                                <a class="dropdown-item"
-                                    href="{{ route('eco.pages.rapport-credit') }}">Echeancier</a>
-                                <a class="dropdown-item" href="{{ route('eco.pages.rapport-credit') }}">Tableau
-                                    d'Ammortisement</a>
-                                {{-- <a class="dropdown-item" href="">Crédits En cours</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.appro') }}">Appro</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.delestage') }}">Délestage</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.entreeT') }}">Entrée T</a>
+                                </div>
+                            </li>
+                        @endif
+                        @if ($isAgentCredit)
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdown04"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Crédit</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdown04">
+                                    <a class="dropdown-item" href="{{ route('eco.pages.montage-credit') }}">Montage
+                                        crédit</a>
+                                    <a class="dropdown-item"
+                                        href="{{ route('eco.pages.rapport-credit') }}">Echeancier</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.rapport-credit') }}">Tableau
+                                        d'Ammortisement</a>
+                                    {{-- <a class="dropdown-item" href="">Crédits En cours</a>
                             <a class="dropdown-item" href="">Crédits cloturés</a> --}}
-                                <a class="dropdown-item" href="{{ route('eco.pages.rapport-credit') }}">Balance
-                                    agée</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.rapport-credit') }}">Balance
+                                        agée</a>
 
-                                {{-- <a class="dropdown-item" href="#">Page 3</a>
+                                    {{-- <a class="dropdown-item" href="#">Page 3</a>
                             <a class="dropdown-item" href="#">Page 4</a> --}}
-                            </div>
+                                </div>
+                            </li>
+                        @endif
+                        @if ($isAgentClientele)
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdown04"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clientèle</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdown04">
+                                    <a class="dropdown-item" href="{{ route('eco.pages.adhesion-membre') }}">Adhésion
+                                        membre</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.releve') }}">Rélevé de
+                                        compte</a>
+                                    <a class="dropdown-item" href="{{ route('eco.pages.sommaire-compte') }}">Sommaire
+                                        de
+                                        compte</a>
+                                    {{-- <a class="dropdown-item" href="#">Page 3</a>
+                            <a class="dropdown-item" href="#">Page 4</a> --}}
+                                </div>
+                            </li>
+                        @endif
+
+                        @if ($isCaissier)
+                            <li class="nav-item"><a href="{{ route('eco.pages.delestage') }}"
+                                    class="nav-link">Délestage</a>
+                            </li>
+                        @endif
+                        @if ($isChefCaisse)
+                            <li class="nav-item"><a href="{{ route('eco.pages.entreeT') }}" class="nav-link">Entrée
+                                    T</a>
+
+                            </li>
+                            <li class="nav-item"><a href="{{ route('eco.pages.appro') }}" class="nav-link">Appro
+                                </a>
+
+                            </li>
+                        @endif
+                        <li class="nav-item"><a href="{{ route('eco.pages.releve') }}" class="nav-link">Relevé</a>
                         </li>
-                    @endif
-                    @if ($isAgentClientele)
+                        <li class="nav-item"><a style="color:red"
+                                href="{{ route('eco.pages.remboursement-attendu') }}" class="nav-link">Rembours.
+                                attendus</a>
+                        </li>
+                        <li class="nav-item"><a href="{{ route('eco.pages.sms-banking') }}" class="nav-link">SMS
+                                Banking</a>
+                        </li>
+
+
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="dropdown04"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clientèle</a>
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Rapport</a>
                             <div class="dropdown-menu" aria-labelledby="dropdown04">
-                                <a class="dropdown-item" href="{{ route('eco.pages.adhesion-membre') }}">Adhésion
-                                    membre</a>
-                                <a class="dropdown-item" href="{{ route('eco.pages.releve') }}">Rélevé de compte</a>
+                                <a class="dropdown-item" href="{{ route('eco.pages.balance') }}">Balance</a>
+                                <a class="dropdown-item" href="{{ route('eco.pages.bilan') }}">Bilan</a>
+                                {{-- <a class="dropdown-item" href="">Grand livre</a> --}}
+                                <a class="dropdown-item" href="{{ route('eco.pages.tfr') }}">TFR</a>
+                                <a class="dropdown-item" href="{{ route('eco.pages.releve') }}">Rélevé</a>
+                                <a class="dropdown-item" href="{{ route('eco.pages.rapport-credit') }}">Rapport
+                                    crédit</a>
+                                <a class="dropdown-item" href="{{ route('eco.pages.journal') }}">Journal</a>
+                                <a class="dropdown-item" href="{{ route('eco.pages.repertoire') }}">Repertoire C</a>
+                                <a class="dropdown-item"
+                                    href="{{ route('eco.pages.remboursement-attendu') }}">Remboursement
+                                    attendu</a>
                                 <a class="dropdown-item" href="{{ route('eco.pages.sommaire-compte') }}">Sommaire de
                                     compte</a>
-                                {{-- <a class="dropdown-item" href="#">Page 3</a>
-                            <a class="dropdown-item" href="#">Page 4</a> --}}
+
                             </div>
                         </li>
-                    @endif
 
-                    @if ($isCaissier)
-                        <li class="nav-item"><a href="{{ route('eco.pages.delestage') }}"
-                                class="nav-link">Délestage</a>
-                        </li>
-                    @endif
-                    @if ($isChefCaisse)
-                        <li class="nav-item"><a href="{{ route('eco.pages.entreeT') }}" class="nav-link">Entrée
-                                T</a>
-
-                        </li>
-                        <li class="nav-item"><a href="{{ route('eco.pages.appro') }}" class="nav-link">Appro
-                            </a>
-
-                        </li>
-                    @endif
-                    <li class="nav-item"><a href="{{ route('eco.pages.releve') }}" class="nav-link">Relevé</a>
-                    </li>
-                    <li class="nav-item"><a style="color:red" href="{{ route('eco.pages.remboursement-attendu') }}"
-                            class="nav-link">Rembours. attendus</a>
-                    </li>
-                    <li class="nav-item"><a href="{{ route('eco.pages.sms-banking') }}" class="nav-link">SMS
-                            Banking</a>
-                    </li>
-
-
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">Rapport</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown04">
-                            <a class="dropdown-item" href="{{ route('eco.pages.balance') }}">Balance</a>
-                            <a class="dropdown-item" href="{{ route('eco.pages.bilan') }}">Bilan</a>
-                            {{-- <a class="dropdown-item" href="">Grand livre</a> --}}
-                            <a class="dropdown-item" href="{{ route('eco.pages.tfr') }}">TFR</a>
-                            <a class="dropdown-item" href="{{ route('eco.pages.releve') }}">Rélevé</a>
-                            <a class="dropdown-item" href="{{ route('eco.pages.rapport-credit') }}">Rapport
-                                crédit</a>
-                            <a class="dropdown-item" href="{{ route('eco.pages.journal') }}">Journal</a>
-                            <a class="dropdown-item" href="{{ route('eco.pages.repertoire') }}">Repertoire C</a>
-                            <a class="dropdown-item"
-                                href="{{ route('eco.pages.remboursement-attendu') }}">Remboursement
-                                attendu</a>
-                            <a class="dropdown-item" href="{{ route('eco.pages.sommaire-compte') }}">Sommaire de
-                                compte</a>
-
-                        </div>
-                    </li>
-
-                </ul>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    @endif
     <!-- /.navbar -->
     <div class="d-flex flex-column min-vh-100">
         <!-- Contenu principal -->
